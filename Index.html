@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ypê (Química Amparo) — Painel de Controladoria & Business Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-page:   #f3f4f6;
+    --bg-card:   #ffffff;
+    --bg-surf:   #f9fafb;
+    --text-1:    #111827;
+    --text-2:    #6b7280;
+    --text-3:    #9ca3af;
+    --border:    rgba(0,0,0,0.08);
+    --border-m:  rgba(0,0,0,0.13);
+    --grid:      rgba(0,0,0,0.05);
+    --tick:      #9ca3af;
+    --green-ype: #2e7d32;
+    --yellow-ype:#f9a825;
+    --green:     #16a34a;
+    --red:       #dc2626;
+    --amber:     #d97706;
+    --indigo:    #6366f1;
+    --r-md:      8px;
+    --r-lg:      12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-page:  #080c14;
+      --bg-card:  #111827;
+      --bg-surf:  #0f1520;
+      --text-1:   #f1f5f9;
+      --text-2:   #64748b;
+      --text-3:   #475569;
+      --border:   rgba(255,255,255,0.07);
+      --border-m: rgba(255,255,255,0.12);
+      --grid:     rgba(255,255,255,0.05);
+      --tick:     #64748b;
+    }
+  }
+
+  body { background: var(--bg-page); font-family: 'Inter', sans-serif; color: var(--text-1); padding: 32px 24px; }
+  .dash { max-width: 1180px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  .hdr {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 32px; padding-bottom: 20px;
+    border-bottom: 0.5px solid var(--border-m);
+  }
+  .brand { display: flex; align-items: center; gap: 16px; }
+  .logo-wrap {
+    width: 52px; height: 52px; border-radius: var(--r-md);
+    overflow: hidden; flex-shrink: 0;
+    background: var(--green-ype);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-wrap img { width: 44px; height: 44px; object-fit: contain; filter: brightness(0) invert(1); }
+  .logo-text { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -1px; }
+  .brand-name { font-size: 18px; font-weight: 600; color: var(--text-1); }
+  .brand-sub  { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+  .hdr-r { display: flex; align-items: center; gap: 10px; }
+  .live  { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+
+  /* CRISE ALERT BANNER */
+  .crisis-banner {
+    background: #fef2f2; border: 1px solid #fecaca;
+    border-radius: var(--r-lg); padding: 14px 18px;
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .crisis-banner { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.3); }
+  }
+  .crisis-icon { font-size: 20px; flex-shrink: 0; }
+  .crisis-title { font-size: 12px; font-weight: 600; color: #b91c1c; margin-bottom: 3px; }
+  .crisis-text  { font-size: 11px; color: var(--text-2); line-height: 1.5; }
+  .crisis-badge {
+    margin-left: auto; flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 500;
+    background: #fee2e2; color: #b91c1c; border-radius: 99px; padding: 3px 8px;
+  }
+
+  .bdg {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--text-2); background: var(--bg-surf);
+    border: 0.5px solid var(--border); border-radius: var(--r-md); padding: 5px 10px;
+  }
+
+  /* ── SECTION ── */
+  .sec {
+    font-size: 10px; font-weight: 500; color: var(--text-2);
+    text-transform: uppercase; letter-spacing: .1em;
+    margin: 28px 0 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .sec::after { content:''; flex:1; height:.5px; background:var(--border); }
+
+  /* ── GRIDS ── */
+  .g4  { display:grid; grid-template-columns:repeat(4,1fr); gap:8px;  margin-bottom:10px; }
+  .g3  { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px; }
+  .g2  { display:grid; grid-template-columns:1fr 1fr;       gap:10px; margin-bottom:10px; }
+  .g21 { display:grid; grid-template-columns:2fr 1fr;       gap:10px; margin-bottom:10px; }
+  .g13 { display:grid; grid-template-columns:1fr 3fr;       gap:10px; margin-bottom:10px; }
+
+  @media (max-width:900px) { .g4,.g3,.g2,.g21,.g13 { grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px) { .g4,.g3,.g2,.g21,.g13 { grid-template-columns:1fr; } }
+
+  /* ── KPI ── */
+  .kpi { background:var(--bg-surf); border-radius:var(--r-md); padding:14px; display:flex; flex-direction:column; gap:4px; }
+  .kl { font-size:10px; font-weight:500; color:var(--text-2); text-transform:uppercase; letter-spacing:.04em; }
+  .kv { font-family:'JetBrains Mono',monospace; font-size:21px; font-weight:500; color:var(--text-1); line-height:1; }
+  .kd { font-size:10px; }
+  .kd.up{color:var(--green)}.kd.dn{color:var(--red)}.kd.wn{color:var(--amber)}.kd.mt{color:var(--text-3)}
+
+  /* ── PILLS ── */
+  .pill { display:inline-flex; align-items:center; font-size:9px; font-weight:500; padding:2px 8px; border-radius:99px; margin-top:4px; font-family:'JetBrains Mono',monospace; }
+  .pg { background:#dcfce7; color:#15803d; }
+  .pr { background:#fee2e2; color:#b91c1c; }
+  .pa { background:#fef9c3; color:#a16207; }
+  .pi { background:#ede9fe; color:#6d28d9; }
+  .pb { background:#dbeafe; color:#1e40af; }
+  @media (prefers-color-scheme:dark) {
+    .pg{background:rgba(21,128,61,.18);color:#4ade80}
+    .pr{background:rgba(185,28,28,.18);color:#f87171}
+    .pa{background:rgba(161,98,7,.18);color:#fbbf24}
+    .pi{background:rgba(109,40,217,.18);color:#c4b5fd}
+    .pb{background:rgba(30,64,175,.18);color:#93c5fd}
+  }
+
+  /* ── CARD ── */
+  .card { background:var(--bg-card); border:.5px solid var(--border); border-radius:var(--r-lg); padding:18px; }
+  .ct { font-size:11px; font-weight:500; color:var(--text-1); display:flex; justify-content:space-between; align-items:baseline; margin-bottom:3px; }
+  .ct span { font-weight:400; font-size:10px; color:var(--text-2); }
+  .sub { font-size:10px; color:var(--text-3); margin-bottom:12px; }
+
+  /* ── CHARTS ── */
+  .ch     { position:relative; width:100%; }
+  .ch220  { height:220px; } .ch200 { height:200px; } .ch180 { height:180px; }
+  .ch160  { height:160px; } .ch140 { height:140px; }
+
+  /* ── LEGEND ── */
+  .lg { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+  .lg-i { display:flex; align-items:center; gap:4px; font-size:10px; color:var(--text-2); }
+  .lg-sq { width:7px; height:7px; border-radius:2px; flex-shrink:0; }
+  .lg-ln { width:14px; height:2px; border-radius:1px; flex-shrink:0; }
+
+  /* ── BRAND CARDS (portfólio) ── */
+  .brand-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:10px; }
+  @media (max-width:700px) { .brand-grid { grid-template-columns:repeat(2,1fr); } }
+
+  .bc {
+    background:var(--bg-card); border:.5px solid var(--border);
+    border-radius:var(--r-lg); padding:14px;
+    display:flex; flex-direction:column; align-items:flex-start; gap:8px;
+  }
+  .bc-img {
+    width:56px; height:56px; object-fit:contain; border-radius:var(--r-md);
+    background:var(--bg-surf); padding:4px;
+  }
+  .bc-name { font-size:12px; font-weight:600; color:var(--text-1); }
+  .bc-cat  { font-size:10px; color:var(--text-2); margin-top:-4px; }
+  .bc-rec  { font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:500; color:var(--text-1); }
+  .bc-delta{ font-size:10px; }
+  .bc-delta.up{color:var(--green)} .bc-delta.dn{color:var(--red)} .bc-delta.wn{color:var(--amber)}
+
+  /* ── TABLE ── */
+  .bt { width:100%; border-collapse:collapse; font-size:11px; }
+  .bt th { text-align:left; font-weight:500; font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); padding:0 8px 10px; border-bottom:.5px solid var(--border-m); }
+  .bt th:not(:first-child) { text-align:right; }
+  .bt td { padding:8px 8px; border-bottom:.5px solid var(--border); color:var(--text-2); vertical-align:middle; }
+  .bt td:first-child { color:var(--text-1); font-weight:500; }
+  .bt td:not(:first-child) { text-align:right; font-family:'JetBrains Mono',monospace; font-size:10px; }
+  .bt tr:last-child td { border:none; }
+  .bt td.g{color:var(--green)} .bt td.r{color:var(--red)} .bt td.a{color:var(--amber)}
+
+  /* ── PROGRESS ── */
+  .pr-row { margin-bottom:10px; }
+  .pr-lbl { display:flex; justify-content:space-between; font-size:11px; color:var(--text-2); margin-bottom:4px; }
+  .pr-lbl b { font-family:'JetBrains Mono',monospace; font-weight:400; color:var(--text-1); }
+  .pr-track { height:4px; background:var(--border); border-radius:99px; overflow:hidden; }
+  .pr-fill  { height:100%; border-radius:99px; }
+
+  /* ── ALERTS ── */
+  .al { display:flex; align-items:flex-start; gap:8px; padding:8px 0; border-bottom:.5px solid var(--border); font-size:11px; }
+  .al:last-child { border:none; }
+  .al-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; margin-top:3px; }
+  .al-dot.r{background:var(--red)} .al-dot.a{background:var(--amber)} .al-dot.g{background:var(--green)}
+  .al-tx  { color:var(--text-2); flex:1; line-height:1.5; }
+  .al-tag { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text-3); white-space:nowrap; }
+
+  /* ── FOOTER ── */
+  .footer { margin-top:36px; padding-top:16px; border-top:.5px solid var(--border); display:flex; justify-content:space-between; font-size:10px; color:var(--text-3); }
+  .footer span { font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<div class="dash">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="brand">
+      <div class="logo-wrap">
+        <div class="logo-text">Ypê</div>
+      </div>
+      <div>
+        <div class="brand-name">Ypê · Química Amparo</div>
+        <div class="brand-sub">Controladoria & Business Intelligence · Fundada 1950 · 75 anos · 100% brasileira</div>
+      </div>
+    </div>
+    <div class="hdr-r">
+      <div class="live"></div>
+      <div class="bdg">Abr 2026 · consolidado</div>
+    </div>
+  </div>
+
+  <!-- CRISE ANVISA BANNER -->
+  <div class="crisis-banner">
+    <div class="crisis-icon">⚠️</div>
+    <div>
+      <div class="crisis-title">Alerta regulatório — Crise Anvisa (Mai/2026)</div>
+      <div class="crisis-text">
+        Em 07/05/2026 a Anvisa suspendeu 24 produtos Ypê por falhas estruturais no processo produtivo da planta de Amparo (SP) — risco de contaminação microbiológica.
+        A empresa obteve efeito suspensivo via recurso administrativo, mas a Anvisa mantém avaliação técnica de risco e recomenda evitar os produtos afetados.
+        Impacto estimado: R$280–420M em receita exposta (linha Detergentes + Lava-roupas líquidos). Ação imediata requerida de Qualidade, Jurídico e Comercial.
+      </div>
+    </div>
+    <div class="crisis-badge">MONITORANDO</div>
+  </div>
+
+  <!-- KPIs CORPORATIVOS -->
+  <div class="sec">Indicadores corporativos — dados públicos 2025/2026</div>
+  <div class="g4">
+    <div class="kpi">
+      <div class="kl">Faturamento anual</div>
+      <div class="kv">~R$10B</div>
+      <div class="kd up">2ª maior do setor no BR</div>
+      <div class="pill pg">Líder nacional</div>
+    </div>
+    <div class="kpi">
+      <div class="kl">Penetração domiciliar</div>
+      <div class="kv">95%</div>
+      <div class="kd up">2ª marca mais presente no BR</div>
+      <div class="pill pg">Kantar 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kl">Portfólio de produtos</div>
+      <div class="kv">+450</div>
+      <div class="kd mt">23 categorias · 8 marcas</div>
+      <div class="pill pb">Diversificado</div>
+    </div>
+    <div class="kpi">
+      <div class="kl">Colaboradores</div>
+      <div class="kv">7.300</div>
+      <div class="kd up">GPTW 2025 — melhor indústria</div>
+      <div class="pill pg">Top employer</div>
+    </div>
+  </div>
+  <div class="g4">
+    <div class="kpi">
+      <div class="kl">Market share — detergentes</div>
+      <div class="kv">>50%</div>
+      <div class="kd up">Mercado R$3,6B (Euromonitor)</div>
+      <div class="pill pg">Líder absoluto</div>
+    </div>
+    <div class="kpi">
+      <div class="kl">CAPEX acumulado — PE</div>
+      <div class="kv">R$670M</div>
+      <div class="kd wn">+R$220M até dez/2026</div>
+      <div class="pill pa">Em execução</div>
+    </div>
+    <div class="kpi">
+      <div class="kl">Unidades fabris</div>
+      <div class="kv">7</div>
+      <div class="kd mt">SP · BA · GO · MG · PE</div>
+      <div class="pill pb">Nacional</div>
+    </div>
+    <div class="kpi">
+      <div class="kl">Top of Mind Detergente</div>
+      <div class="kv">9º ano</div>
+      <div class="kd up">Folha de SP 2024</div>
+      <div class="pill pg">Referência</div>
+    </div>
+  </div>
+
+  <!-- PORTFÓLIO DE MARCAS COM IMAGENS -->
+  <div class="sec">Portfólio de marcas — P&L estimado por categoria</div>
+  <div class="brand-grid">
+    <div class="bc">
+      <img class="bc-img"
+        src="https://www.ype.ind.br/_next/image?url=https%3A%2F%2Fassets.ype.ind.br%2Fassets%2Fprodutos%2Ffamilias%2Fdetergentes%2Fdetergente.webp&w=256&q=75"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+        alt="Detergente Ypê">
+      <div style="display:none;width:56px;height:56px;background:#dcfce7;border-radius:8px;align-items:center;justify-content:center;font-size:22px">🧴</div>
+      <div class="bc-name">Ypê Detergente</div>
+      <div class="bc-cat">Limpeza de louças</div>
+      <div class="bc-rec">~R$1,8B</div>
+      <div class="bc-delta up">▲ +10,8% YoY · líder &gt;50% share</div>
+      <span class="pill pg">Líder</span>
+    </div>
+    <div class="bc">
+      <img class="bc-img"
+        src="https://www.ype.ind.br/_next/image?url=https%3A%2F%2Fassets.ype.ind.br%2Fassets%2Fprodutos%2Ffamilias%2Fsabao-em-po%2Ftixan.webp&w=256&q=75"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+        alt="Tixan Ypê">
+      <div style="display:none;width:56px;height:56px;background:#fef9c3;border-radius:8px;align-items:center;justify-content:center;font-size:22px">🧺</div>
+      <div class="bc-name">Tixan</div>
+      <div class="bc-cat">Sabão em pó / lava-roupas</div>
+      <div class="bc-rec">~R$2,4B</div>
+      <div class="bc-delta dn">▼ Mercado −19,7% (sabão pó)</div>
+      <span class="pill pa">Monitorar</span>
+    </div>
+    <div class="bc">
+      <img class="bc-img"
+        src="https://www.ype.ind.br/_next/image?url=https%3A%2F%2Fassets.ype.ind.br%2Fassets%2Fprodutos%2Ffamilias%2Famaciantes-concentrados%2Famaciante-concentrado.webp&w=256&q=75"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+        alt="Flor de Ypê">
+      <div style="display:none;width:56px;height:56px;background:#ede9fe;border-radius:8px;align-items:center;justify-content:center;font-size:22px">🌸</div>
+      <div class="bc-name">Flor de Ypê</div>
+      <div class="bc-cat">Cuidados pessoais · sabonetes</div>
+      <div class="bc-rec">~R$1,1B</div>
+      <div class="bc-delta up">▲ TOP 3 volume · +5,9pp penetração</div>
+      <span class="pill pg">Acelerando</span>
+    </div>
+    <div class="bc">
+      <img class="bc-img"
+        src="https://www.ype.ind.br/_next/image?url=https%3A%2F%2Fassets.ype.ind.br%2Fassets%2Fprodutos%2Ffamilias%2Fla-de-aco%2Fassolan.webp&w=256&q=75"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+        alt="Assolan">
+      <div style="display:none;width:56px;height:56px;background:#f0fdf4;border-radius:8px;align-items:center;justify-content:center;font-size:22px">🔩</div>
+      <div class="bc-name">Assolan</div>
+      <div class="bc-cat">Palha de aço · esponja</div>
+      <div class="bc-rec">~R$480M</div>
+      <div class="bc-delta up">▲ liderança na categoria</div>
+      <span class="pill pb">Estável</span>
+    </div>
+    <div class="bc">
+      <div style="width:56px;height:56px;background:#fef2f2;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px">✨</div>
+      <div class="bc-name">Perfex</div>
+      <div class="bc-cat">Panos e acessórios</div>
+      <div class="bc-rec">~R$320M</div>
+      <div class="bc-delta up">▲ expansão de linha</div>
+      <span class="pill pg">Crescendo</span>
+    </div>
+    <div class="bc">
+      <div style="width:56px;height:56px;background:#f0fdf4;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px">🌿</div>
+      <div class="bc-name">Ypê Green</div>
+      <div class="bc-cat">Linha sustentável</div>
+      <div class="bc-rec">~R$210M</div>
+      <div class="bc-delta up">▲ meta 200k árvores plantadas</div>
+      <span class="pill pg">ESG premium</span>
+    </div>
+    <div class="bc">
+      <div style="width:56px;height:56px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px">🫧</div>
+      <div class="bc-name">Siene</div>
+      <div class="bc-cat">Cuidados pessoais premium</div>
+      <div class="bc-rec">~R$180M</div>
+      <div class="bc-delta up">▲ adquirida Banho a Banho 2024</div>
+      <span class="pill pi">Novo</span>
+    </div>
+    <div class="bc">
+      <div style="width:56px;height:56px;background:#fef9c3;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px">💪</div>
+      <div class="bc-name">Action de Ypê</div>
+      <div class="bc-cat">Limpeza pesada / multiuso</div>
+      <div class="bc-rec">~R$290M</div>
+      <div class="bc-delta wn">▼ mercado competitivo</div>
+      <span class="pill pa">Atenção</span>
+    </div>
+  </div>
+
+  <!-- ANÁLISE DE MERCADO -->
+  <div class="sec">Mercado & competitividade — Euromonitor / Kantar 2025</div>
+  <div class="g21">
+    <div class="card">
+      <div class="ct">Evolução do mercado de limpeza doméstica <span>R$ bilhões · Euromonitor</span></div>
+      <div class="sub">Crescimento em detergentes vs. queda estrutural em sabão em pó + impacto crise mai/2026</div>
+      <div class="lg">
+        <div class="lg-i"><div class="lg-sq" style="background:#2e7d32"></div>Detergente lava-louças</div>
+        <div class="lg-i"><div class="lg-sq" style="background:#1565c0"></div>Sabão em pó</div>
+        <div class="lg-i"><div class="lg-sq" style="background:#8b5cf6"></div>Higiene pessoal</div>
+        <div class="lg-i"><div class="lg-sq" style="background:#f59e0b"></div>Amaciantes</div>
+      </div>
+      <div class="ch ch220"><canvas id="mercChart" role="img" aria-label="Evolução do mercado de limpeza doméstica por segmento 2021 a 2026"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Market share estimado — detergentes <span>% valor · BR · 2025</span></div>
+      <div class="sub">Ypê lidera com mais de 50% — mercado de R$3,6B</div>
+      <div class="ch ch220"><canvas id="shareChart" role="img" aria-label="Market share de detergentes no Brasil por fabricante"></canvas></div>
+    </div>
+  </div>
+
+  <!-- P&L POR DIVISÃO -->
+  <div class="sec">P&L estimado por divisão de negócio</div>
+  <div class="card" style="margin-bottom:10px">
+    <div class="ct">Desempenho por divisão <span>Receita estimada · Margem · Tendência de mercado · Risco Anvisa</span></div>
+    <div class="sub">Base: faturamento anual ~R$10B · dados públicos Euromonitor, Kantar, reportagens 2025/2026</div>
+    <table class="bt">
+      <thead>
+        <tr>
+          <th>Divisão / Marca</th>
+          <th>Rec. Est. (R$B)</th>
+          <th>Share receita</th>
+          <th>Tendência mercado</th>
+          <th>GM est.</th>
+          <th>Risco Anvisa</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>🧴 Detergentes (Ypê)</td><td>1,8</td><td class="g">18%</td><td class="g">▲ +10,8% YoY</td><td>~48%</td><td class="r">Alto — 24 SKUs suspensos</td><td><span class="pill pr">Crise ativa</span></td></tr>
+        <tr><td>🧺 Lava-roupas (Tixan)</td><td>2,4</td><td class="g">24%</td><td class="r">▼ Mercado −19,7%</td><td>~38%</td><td class="r">Alto — recolhimento nov/25</td><td><span class="pill pr">Atenção máx.</span></td></tr>
+        <tr><td>🌸 Higiene pessoal (Flor/Siene)</td><td>1,3</td><td class="a">13%</td><td class="g">▲ +5,9pp penetração</td><td>~52%</td><td class="g">Baixo</td><td><span class="pill pg">Acelerando</span></td></tr>
+        <tr><td>🔩 Palha de aço / esponjas (Assolan)</td><td>0,5</td><td class="a">5%</td><td class="a">→ Estável</td><td>~42%</td><td class="g">Nenhum</td><td><span class="pill pb">Estável</span></td></tr>
+        <tr><td>🏠 Limpadores / multiuso</td><td>2,1</td><td class="g">21%</td><td class="a">→ +3,2% YoY</td><td>~44%</td><td class="a">Médio</td><td><span class="pill pa">Monitorar</span></td></tr>
+        <tr><td>🌿 Linha verde / ESG</td><td>0,4</td><td class="r">4%</td><td class="g">▲ Crescimento rápido</td><td>~55%</td><td class="g">Nenhum</td><td><span class="pill pg">Oportunidade</span></td></tr>
+        <tr><td>📦 Outros (Perfex, Atol, acessórios)</td><td>1,5</td><td class="a">15%</td><td class="a">→ Estável</td><td>~40%</td><td class="g">Baixo</td><td><span class="pill pb">Estável</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GRÁFICOS -->
+  <div class="g3">
+    <div class="card">
+      <div class="ct">Mix de receita estimado <span>por divisão · %</span></div>
+      <div class="sub">Composição do faturamento ~R$10B</div>
+      <div class="ch ch180"><canvas id="mixChart" role="img" aria-label="Mix de receita por divisão do grupo Ypê"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Penetração domiciliar — marcas <span>% lares brasileiros · Kantar 2024</span></div>
+      <div class="sub">Presença em lares — vantagem competitiva estrutural</div>
+      <div class="ch ch180"><canvas id="penetChart" role="img" aria-label="Penetração domiciliar das marcas Ypê no Brasil"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Evolução Top of Mind <span>detergente · anos consecutivos</span></div>
+      <div class="sub">Folha de SP — liderança de marca 9 anos seguidos</div>
+      <div class="ch ch180"><canvas id="tomChart" role="img" aria-label="Evolução do Top of Mind de detergente nos últimos 9 anos"></canvas></div>
+    </div>
+  </div>
+
+  <!-- CAPEX & EXPANSÃO -->
+  <div class="sec">CAPEX & expansão industrial</div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Investimento por unidade fabril <span>R$ milhões · acumulado</span></div>
+      <div class="sub">7 plantas industriais — cobertura nacional</div>
+      <div class="ch ch180"><canvas id="capexChart" role="img" aria-label="Investimento acumulado por unidade fabril do grupo Ypê"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Expansão cuidados pessoais <span>receita estimada · R$ M</span></div>
+      <div class="sub">Nova unidade de negócio desde 2023 — aquisição Higident 2020 + Banho a Banho 2024</div>
+      <div class="lg">
+        <div class="lg-i"><div class="lg-ln" style="background:#2e7d32"></div>Receita higiene pessoal</div>
+        <div class="lg-i"><div class="lg-ln" style="background:#2e7d32;border-top:2px dashed #2e7d32;height:0;width:14px"></div>Projeção 5 anos</div>
+      </div>
+      <div class="ch ch180"><canvas id="hpChart" role="img" aria-label="Crescimento da divisão de higiene pessoal desde 2020"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ESG -->
+  <div class="sec">ESG & sustentabilidade</div>
+  <div class="g3">
+    <div class="card">
+      <div class="ct">Indicadores ambientais</div>
+      <div class="sub">Compromisso com o Pacto Global ONU · Empresa Pró-Ética CGU</div>
+      <div style="margin-top:8px">
+        <div class="pr-row"><div class="pr-lbl"><span>Meta Plantômetro — árvores plantadas</span><b>168k / 200k</b></div><div class="pr-track"><div class="pr-fill" style="width:84%;background:#2e7d32"></div></div></div>
+        <div class="pr-row"><div class="pr-lbl"><span>Resíduos destinados reciclagem</span><b>500 t</b></div><div class="pr-track"><div class="pr-fill" style="width:78%;background:#16a34a"></div></div></div>
+        <div class="pr-row"><div class="pr-lbl"><span>Faturamento gerado catadores</span><b>R$700k</b></div><div class="pr-track"><div class="pr-fill" style="width:60%;background:#16a34a"></div></div></div>
+        <div class="pr-row"><div class="pr-lbl"><span>Top of Mind Sustentabilidade</span><b>17 anos consecutivos</b></div><div class="pr-track"><div class="pr-fill" style="width:100%;background:#2e7d32"></div></div></div>
+        <div class="pr-row" style="margin-bottom:0"><div class="pr-lbl"><span>Pacto Global ONU — ativo desde</span><b>2018</b></div><div class="pr-track"><div class="pr-fill" style="width:90%;background:#2e7d32"></div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Score ESG estimado <span>por dimensão · 0–100</span></div>
+      <div class="sub">Ambiental forte · Social sólido · Governança com oportunidade de melhoria</div>
+      <div class="ch ch180"><canvas id="esgChart" role="img" aria-label="Score ESG do grupo Ypê por dimensão e evolução anual"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Reconhecimentos & certificações</div>
+      <div class="sub">Histórico de prêmios e selos institucionais</div>
+      <div style="margin-top:8px">
+        <div class="al"><div class="al-dot g"></div><div class="al-tx">Top of Mind Detergente — 9 anos consecutivos (Folha de SP)</div><div class="al-tag">2024</div></div>
+        <div class="al"><div class="al-dot g"></div><div class="al-tx">Top of Mind Sustentabilidade — 17 anos consecutivos</div><div class="al-tag">2024</div></div>
+        <div class="al"><div class="al-dot g"></div><div class="al-tx">Empresa Pró-Ética CGU — única do setor de limpeza (2 vezes)</div><div class="al-tag">2022/23</div></div>
+        <div class="al"><div class="al-dot g"></div><div class="al-tx">GPTW — Melhor indústria para trabalhar no interior paulista</div><div class="al-tag">2025</div></div>
+        <div class="al"><div class="al-dot g"></div><div class="al-tx">Pacto Global ONU e Pacto Empresarial contra Corrupção</div><div class="al-tag">ativo</div></div>
+        <div class="al"><div class="al-dot g"></div><div class="al-tx">Flor de Ypê: TOP 3 sabonetes em volume no Brasil (Nielsen)</div><div class="al-tag">2023</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTAS & GESTÃO DE RISCO -->
+  <div class="sec">Gestão de riscos & oportunidades estratégicas</div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Radar de riscos — mai/2026</div>
+      <div class="sub">Itens críticos para Controladoria, Jurídico, Qualidade e Comercial</div>
+      <div style="margin-top:8px">
+        <div class="al"><div class="al-dot r"></div><div class="al-tx"><strong>Crise Anvisa mai/2026:</strong> 24 produtos suspensos — falhas estruturais em Amparo. Impacto estimado R$280–420M em receita exposta. Efeito suspensivo ativo, julgamento DICOL pendente</div><div class="al-tag">crítico</div></div>
+        <div class="al"><div class="al-dot r"></div><div class="al-tx"><strong>Sabão em pó (Tixan):</strong> mercado caiu de R$5,5B (2023) para R$4,4B (2025), com projeção de −19,2% adicional até 2028. Pressão de share para Omo + migração para sabão líquido</div><div class="al-tag">estrutural</div></div>
+        <div class="al"><div class="al-dot r"></div><div class="al-tx"><strong>Reputação pós-crise:</strong> 2ª ocorrência Anvisa em 12 meses. Risco de erosão de confiança em marca com 95% de penetração — monitorar NPS e sell-out semanal</div><div class="al-tag">imagem</div></div>
+        <div class="al"><div class="al-dot a"></div><div class="al-tx"><strong>Capacidade PE:</strong> investimento R$670M em Itapissuma — monitorar ramp-up e eficiência de custo vs. planta de Amparo sob restrição regulatória</div><div class="al-tag">operacional</div></div>
+        <div class="al"><div class="al-dot a"></div><div class="al-tx"><strong>Competição intensificada:</strong> crise abre janela para Unilever (Omo/Comfort), P&G (Ariel/Downy) e Reckitt (Veja) capturarem share — monitorar preço e presença de PDV</div><div class="al-tag">comercial</div></div>
+        <div class="al"><div class="al-dot g"></div><div class="al-tx"><strong>Oportunidade cuidados pessoais:</strong> Flor de Ypê entre top 5 em ganho de penetração (+5,9pp). Nova UEN com margem superior → prioridade de CAPEX e A&P</div><div class="al-tag">oport.</div></div>
+        <div class="al"><div class="al-dot g"></div><div class="al-tx"><strong>Detergentes lava-louças:</strong> mercado cresce 10,8% YoY, deve atingir R$4,7B até 2028 (+30%). Principal alavanca de crescimento se crise Anvisa for resolvida rapidamente</div><div class="al-tag">oport.</div></div>
+        <div class="al"><div class="al-dot g"></div><div class="al-tx"><strong>Ypê Green:</strong> linha ESG com margem premium. Plantômetro e engajamento de consumidores — vetor de diferenciação vs. multinacionais</div><div class="al-tag">oport.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Atingimento de metas estratégicas <span>2025–2026</span></div>
+      <div class="sub">Progresso dos pilares do plano quinquenal da liderança</div>
+      <div style="margin-top:10px">
+        <div class="pr-row"><div class="pr-lbl"><span>Liderança em detergentes (share)</span><b>&gt;50% atingido</b></div><div class="pr-track"><div class="pr-fill" style="width:100%;background:#2e7d32"></div></div></div>
+        <div class="pr-row"><div class="pr-lbl"><span>Expansão higiene pessoal (5 anos)</span><b>Ano 3 de 5</b></div><div class="pr-track"><div class="pr-fill" style="width:55%;background:#6366f1"></div></div></div>
+        <div class="pr-row"><div class="pr-lbl"><span>CAPEX PE — R$670M</span><b>R$450M concluído</b></div><div class="pr-track"><div class="pr-fill" style="width:67%;background:#d97706"></div></div></div>
+        <div class="pr-row"><div class="pr-lbl"><span>Plantômetro — 200k árvores</span><b>168k plantadas</b></div><div class="pr-track"><div class="pr-fill" style="width:84%;background:#2e7d32"></div></div></div>
+        <div class="pr-row"><div class="pr-lbl"><span>Resolução crise Anvisa</span><b>Em andamento</b></div><div class="pr-track"><div class="pr-fill" style="width:15%;background:#dc2626"></div></div></div>
+        <div class="pr-row"><div class="pr-lbl"><span>Reconhecimento GPTW nacional</span><b>Interior SP ✓</b></div><div class="pr-track"><div class="pr-fill" style="width:80%;background:#2e7d32"></div></div></div>
+        <div class="pr-row" style="margin-bottom:0"><div class="pr-lbl"><span>Penetração cuidados pessoais</span><b>TOP 3 sabonetes (Nielsen)</b></div><div class="pr-track"><div class="pr-fill" style="width:70%;background:#6366f1"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Ypê · Química Amparo — Painel de Controladoria & BI · Dados: Euromonitor, Kantar, Abipla, Exame, CNBC Brasil</span>
+    <span id="footer-date"></span>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+  document.getElementById('footer-date').textContent = new Date().toLocaleString('pt-BR');
+
+  const dark  = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const grid  = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+  const tick  = dark ? '#64748b' : '#9ca3af';
+  const YPE   = dark ? 'rgba(46,125,50,0.75)'   : 'rgba(46,125,50,0.65)';
+  const YPElt = dark ? 'rgba(46,125,50,0.1)'    : 'rgba(46,125,50,0.06)';
+  const BLU   = dark ? 'rgba(21,101,192,0.72)'  : 'rgba(21,101,192,0.58)';
+  const PUR   = dark ? 'rgba(139,92,246,0.7)'   : 'rgba(139,92,246,0.56)';
+  const AMB   = dark ? 'rgba(245,158,11,0.7)'   : 'rgba(245,158,11,0.56)';
+  const GRN   = dark ? 'rgba(22,163,74,0.68)'   : 'rgba(22,163,74,0.55)';
+  const RED   = dark ? 'rgba(220,38,38,0.68)'   : 'rgba(220,38,38,0.52)';
+
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.font.size   = 10;
+  Chart.defaults.color       = tick;
+
+  // 1. Mercado por segmento
+  new Chart(document.getElementById('mercChart'), {
+    type: 'bar',
+    data: {
+      labels: ['2021','2022','2023','2024','2025','2026P'],
+      datasets: [
+        { label:'Detergente',  data:[2.8,3.0,3.1,3.3,3.6,3.9], backgroundColor:YPE,  borderRadius:3, stack:'s', barPercentage:.65 },
+        { label:'Sabão pó',    data:[5.0,5.3,5.5,4.9,4.4,4.1], backgroundColor:BLU,  borderRadius:3, stack:'s', barPercentage:.65 },
+        { label:'Hig. pessoal',data:[0.6,0.8,1.0,1.2,1.4,1.7], backgroundColor:PUR,  borderRadius:3, stack:'s', barPercentage:.65 },
+        { label:'Amaciantes',  data:[1.8,1.9,2.0,2.1,2.2,2.3], backgroundColor:AMB,  borderRadius:3, stack:'s', barPercentage:.65 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:8, boxHeight:8, padding:10, color:tick, font:{size:9} } },
+        tooltip:{ callbacks:{ label: ctx=>' R$'+ctx.raw+'B' } } },
+      scales:{
+        x:{ stacked:true, grid:{display:false}, ticks:{color:tick} },
+        y:{ stacked:true, grid:{color:grid}, ticks:{color:tick, callback:v=>'R$'+v+'B'} }
+      }
+    }
+  });
+
+  // 2. Market share detergentes
+  new Chart(document.getElementById('shareChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Ypê','>50%','Unilever','P&G','Reckitt','Outros'],
+      datasets: [{ data:[51,0,20,12,8,9], borderWidth:0, hoverOffset:6,
+        backgroundColor: dark
+          ?['rgba(46,125,50,.82)','rgba(46,125,50,.4)','rgba(21,101,192,.72)','rgba(220,38,38,.65)','rgba(217,119,6,.65)','rgba(100,116,139,.5)']
+          :['rgba(46,125,50,.72)','rgba(46,125,50,.3)','rgba(21,101,192,.6)','rgba(220,38,38,.52)','rgba(217,119,6,.52)','rgba(100,116,139,.42)']
+      }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:8, boxHeight:8, padding:9, color:tick, font:{size:9} } },
+        tooltip:{ callbacks:{ label: ctx=>' '+ctx.label+': ~'+ctx.raw+'%' } } }
+    }
+  });
+
+  // 3. Mix receita donut
+  new Chart(document.getElementById('mixChart'), {
+    type: 'doughnut',
+    data: {
+      labels:['Lava-roupas (Tixan)','Limpadores/multiuso','Detergentes (Ypê)','Hig. pessoal','Outros/acessórios','Palha/esponjas','ESG (Ypê Green)'],
+      datasets:[{ data:[24,21,18,13,15,5,4], borderWidth:0, hoverOffset:6,
+        backgroundColor: dark
+          ?['rgba(21,101,192,.78)','rgba(217,119,6,.72)','rgba(46,125,50,.78)','rgba(139,92,246,.72)','rgba(100,116,139,.55)','rgba(220,38,38,.6)','rgba(22,163,74,.65)']
+          :['rgba(21,101,192,.65)','rgba(217,119,6,.62)','rgba(46,125,50,.65)','rgba(139,92,246,.6)','rgba(100,116,139,.45)','rgba(220,38,38,.5)','rgba(22,163,74,.55)']
+      }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'58%',
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:7, boxHeight:7, padding:7, color:tick, font:{size:9} } },
+        tooltip:{ callbacks:{ label: ctx=>' '+ctx.raw+'%' } } }
+    }
+  });
+
+  // 4. Penetração marcas
+  const brands  = ['Ypê','Tixan','Assolan','Flor de Ypê','Perfex','Ypê Green'];
+  const penetVal= [95, 72, 68, 38, 44, 19];
+  new Chart(document.getElementById('penetChart'), {
+    type:'bar',
+    data:{ labels:brands, datasets:[{ data:penetVal, indexAxis:'y', borderRadius:3, barPercentage:.6,
+      backgroundColor: penetVal.map(v=>v>=60?YPE:v>=40?AMB:GRN) }]},
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx=>' '+ctx.raw+'% dos lares' } } },
+      scales:{ x:{grid:{color:grid},ticks:{color:tick,callback:v=>v+'%'},min:0,max:100}, y:{grid:{display:false},ticks:{color:tick}} }
+    }
+  });
+
+  // 5. Top of Mind
+  const years = ['2016','2017','2018','2019','2020','2021','2022','2023','2024'];
+  new Chart(document.getElementById('tomChart'), {
+    type:'line',
+    data:{ labels:years, datasets:[
+      { label:'Score detergente', data:[72,74,76,77,79,80,82,83,85], borderColor:'#2e7d32', borderWidth:2, pointRadius:4, pointBackgroundColor:'#2e7d32', tension:.4, fill:true, backgroundColor:YPElt },
+      { label:'Sustentabilidade', data:[68,70,72,74,76,78,80,82,84], borderColor:'#f9a825', borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#f9a825', tension:.4 }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx=>' score: '+ctx.raw } } },
+      scales:{ x:{grid:{color:grid},ticks:{color:tick}}, y:{grid:{color:grid},ticks:{color:tick},min:60,max:95} }
+    }
+  });
+
+  // 6. CAPEX por planta
+  const plantas = ['Amparo (SP)','Itapissuma (PE)','Salto (SP)','Sim. Filho (BA)','Anápolis (GO)','Itajubá (MG)'];
+  const capexV  = [280,450,120,95,80,65];
+  new Chart(document.getElementById('capexChart'), {
+    type:'bar',
+    data:{ labels:plantas, datasets:[{ data:capexV, borderRadius:4, barPercentage:.62,
+      backgroundColor: capexV.map(v=>v>=300?RED:v>=200?AMB:YPE) }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx=>' R$'+ctx.raw+'M investidos' } } },
+      scales:{ x:{grid:{display:false},ticks:{color:tick,font:{size:9}}}, y:{grid:{color:grid},ticks:{color:tick,callback:v=>'R$'+v+'M'}} }
+    }
+  });
+
+  // 7. Higiene pessoal ramp-up
+  new Chart(document.getElementById('hpChart'), {
+    type:'line',
+    data:{ labels:['2020','2021','2022','2023','2024','2025','2026P','2027P','2028P'],
+      datasets:[
+        { label:'Realizado', data:[180,280,420,680,980,1300,null,null,null], borderColor:'#2e7d32', borderWidth:2, pointRadius:4, pointBackgroundColor:'#2e7d32', tension:.4, fill:true, backgroundColor:YPElt },
+        { label:'Projeção',  data:[null,null,null,null,null,1300,1700,2200,2900], borderColor:'#2e7d32', borderWidth:1.5, borderDash:[5,4], pointRadius:3, pointBackgroundColor:'#2e7d32', tension:.4 }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx=>' R$'+ctx.raw+'M' } } },
+      scales:{ x:{grid:{color:grid},ticks:{color:tick}}, y:{grid:{color:grid},ticks:{color:tick,callback:v=>'R$'+v+'M'},min:0} }
+    }
+  });
+
+  // 8. ESG radar-like line
+  new Chart(document.getElementById('esgChart'), {
+    type:'line',
+    data:{ labels:['2021','2022','2023','2024','2025'],
+      datasets:[
+        { label:'Ambiental', data:[78,80,82,85,88], borderColor:'#2e7d32', borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#2e7d32', tension:.3 },
+        { label:'Social',    data:[70,72,75,78,80], borderColor:'#6366f1', borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#6366f1', tension:.3 },
+        { label:'Governança',data:[60,64,68,70,72], borderColor:'#d97706', borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#d97706', tension:.3 }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:8, boxHeight:8, padding:10, color:tick, font:{size:9} } } },
+      scales:{ x:{grid:{color:grid},ticks:{color:tick}}, y:{grid:{color:grid},ticks:{color:tick},min:50,max:100} }
+    }
+  });
+</script>
+</body>
+</html>
